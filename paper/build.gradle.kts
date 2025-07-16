@@ -1,6 +1,5 @@
 plugins {
     `maven-publish`
-    signing
 }
 
 repositories {
@@ -91,34 +90,20 @@ tasks {
 
         repositories {
             maven {
-                if (version.toString().contains("SNAPSHOT")) {
-                    credentials {
-                        username = project.providers.gradleProperty("triumph.repo.user").get()
-                        password = project.providers.gradleProperty("triumph.repo.token").get()
-                    }
+                credentials {
+                    username = project.providers.gradleProperty("repo.username").get()
+                    password = project.providers.gradleProperty("repo.password").get()
+                }
 
-                    url = uri("https://repo.triumphteam.dev/snapshots/")
+                if(version.toString().contains("SNAPSHOT")) {
+                    url = uri("https://repo.carljoy.cn/repository/maven-snapshots/")
                     return@maven
                 }
 
-                credentials {
-                    username = project.providers.gradleProperty("ossrh.username").get()
-                    password = project.providers.gradleProperty("ossrh.password").get()
-                }
-
-                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                url = uri("https://repo.carljoy.cn/repository/maven-releases/")
             }
         }
 
-    }
-
-    signing {
-        /*useGpgCmd()
-        val signingKey = System.getenv("GPG_KEY")
-        val signingPassword = System.getenv("GPG_PASS")
-        val secretKey = System.getenv("GPG_SECRET_KEY")
-        useInMemoryPgpKeys(signingKey, secretKey, signingPassword)*/
-        sign(publishing.publications["maven"])
     }
 
     withType<JavaCompile> {
